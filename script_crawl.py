@@ -280,7 +280,7 @@ def start_crawl(browsers, js_parser):
 
 
 browsers = []
-with open('C:/Users/Owner/Downloads/news_websites.txt', 'r') as sitefile:
+with open('./news_websites.txt', 'r') as sitefile:
     for line in sitefile.read().splitlines():
         browsers.append(('https://www.' + line, 0))
 
