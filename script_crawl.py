@@ -3,10 +3,11 @@ import os
 from os import listdir
 from os.path import isfile, join
 from selenium import webdriver
-import pyautogui
+from selenium.webdriver.common.keys import Keys
 import random
 from fuzzywuzzy import fuzz
 import json
+from pynput.keyboard import Key, Controller
 
 javascript_parser_2 = "var stack = [];" \
                       " var parsed = [];" \
@@ -65,7 +66,11 @@ def get_reader(firefox_browser, js_parser):
     parsed_elements = []
     parsed_iframes = []
     viewport_area = 0
-    pyautogui.press('f9')
+    # firefox_browser.find_element_by_xpath('/*').send_keys('\ue039')
+    keyboard = Controller()
+    keyboard.press(Key.f9)
+    keyboard.release(Key.f9)
+
     time.sleep(10)
     try:
         viewport_width = float(firefox_browser.execute_script('return window.innerWidth'))
@@ -279,10 +284,10 @@ def start_crawl(browsers, js_parser):
         firefox_browser.quit()
 
 
-browsers = []
-with open('./news_websites.txt', 'r') as sitefile:
-    for line in sitefile.read().splitlines():
-        browsers.append(('https://www.' + line, 0))
+browsers = [('https://www.rogerebert.com/reviews/beastie-boys-story-movie-review-2020', 1)]
+# with open('./news_websites.txt', 'r') as sitefile:
+#     for line in sitefile.read().splitlines():
+#         browsers.append(('https://www.' + line, 0))
 
 start_crawl(browsers, javascript_parser_2)
 
