@@ -7,7 +7,7 @@ from selenium.webdriver.common.keys import Keys
 import random
 from fuzzywuzzy import fuzz
 import json
-from pynput.keyboard import Key, Controller
+import pyautogui
 
 javascript_parser_2 = "var stack = [];" \
                       " var parsed = [];" \
@@ -53,9 +53,15 @@ class HTMLItem(object):
         self.html_obj = html_obj
         self.computedstyle = computedstyle
         self.readermode = False
+        self.html_len = len(html_obj)
+        self.html_type = html_obj[1:html_obj.find('>')]
 
     def inReader(self):
         self.readermode = True
+
+    def toString(self):
+        return '{ id: ' + str(self.id) + ', level: ' + str(self.level) + ', parent_id: ' + str(self.parent_id) + ', html_len: ' + str(self.html_len) + \
+               ', html_type: ' + str(self.html_type) + ', computedstyle: ' + str(self.computedstyle) + ', readermode: ' + str(self.readermode) + ' }'
 
 
 def extract_features():
@@ -67,9 +73,7 @@ def get_reader(firefox_browser, js_parser):
     parsed_iframes = []
     viewport_area = 0
     # firefox_browser.find_element_by_xpath('/*').send_keys('\ue039')
-    keyboard = Controller()
-    keyboard.press(Key.f9)
-    keyboard.release(Key.f9)
+    pyautogui.press('f9')
 
     time.sleep(10)
     try:
@@ -271,13 +275,13 @@ def start_crawl(browsers, js_parser):
         if isReader:
             find_matches(normal[1], reader[1])
 
-            with open('C:/Users/Owner/crawls/normal' + str(sitecounter) + '.json', 'w') as writefile:
+            with open('C:/Users/Owner/crawls/normal' + str(sitecounter) + '.json', 'w', encoding='utf-8') as writefile:
                 for line in normal[1]:
-                    json.dump(line.__dict__, writefile, indent=2)
+                    writefile.write(line.toString())
 
-            with open('C:/Users/Owner/crawls/reader' + str(sitecounter) + '.json', 'w') as writefile:
+            with open('C:/Users/Owner/crawls/reader' + str(sitecounter) + '.json', 'w', encoding='utf-8') as writefile:
                 for line in reader[1]:
-                    json.dump(line.__dict__, writefile, indent=2)
+                    writefile.write(line.toString())
 
             sitecounter += 1
 
